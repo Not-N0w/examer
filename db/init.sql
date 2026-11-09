@@ -46,16 +46,14 @@ CREATE TABLE exam_member (
 CREATE TABLE card (
     id bigserial PRIMARY KEY,
     exam_id bigint NOT NULL REFERENCES exam (id) ON DELETE CASCADE,
-    author_id bigint REFERENCES users (id) ON DELETE
-    SET
-        NULL,
-        question text NOT NULL,
-        answer text,
-        is_fixed boolean NOT NULL DEFAULT false,
-        minutes_to_learn smallint NOT NULL DEFAULT 10,
-        created_at timestamptz NOT NULL DEFAULT now(),
-        CONSTRAINT card_question_not_blank CHECK (length(btrim(question)) > 0),
-        CONSTRAINT card_minutes_positive CHECK (minutes_to_learn > 0)
+    author_id bigint REFERENCES users (id) ON DELETE SET NULL,
+    question text NOT NULL,
+    answer text,
+    is_fixed boolean NOT NULL DEFAULT false,
+    minutes_to_learn smallint NOT NULL DEFAULT 10,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    CONSTRAINT card_question_not_blank CHECK (length(btrim(question)) > 0),
+    CONSTRAINT card_minutes_positive CHECK (minutes_to_learn > 0)
 );
 
 CREATE TABLE note (
@@ -73,34 +71,28 @@ CREATE TABLE note (
 CREATE TABLE change_request (
     id bigserial PRIMARY KEY,
     card_id bigint NOT NULL REFERENCES card (id) ON DELETE CASCADE,
-    author_id bigint REFERENCES users (id) ON DELETE
-    SET
-        NULL,
-        moderator_id bigint REFERENCES users (id) ON DELETE
-    SET
-        NULL,
-        note_id bigint UNIQUE REFERENCES note (id) ON DELETE
-    SET
-        NULL,
-        new_answer text NOT NULL,
-        status varchar(20) NOT NULL DEFAULT 'PENDING',
-        -- PENDING / ACCEPTED / REJECTED
-        created_at timestamptz NOT NULL DEFAULT now(),
-        reviewed_at timestamptz,
-        CONSTRAINT change_request_answer_not_blank CHECK (length(btrim(new_answer)) > 0),
-        CONSTRAINT change_request_status_values CHECK (status IN ('PENDING', 'ACCEPTED', 'REJECTED')),
-        CONSTRAINT change_request_review_consistency CHECK (
-            (
-                status = 'PENDING'
-                AND moderator_id IS NULL
-                AND reviewed_at IS NULL
-            )
-            OR (
-                status <> 'PENDING'
-                AND reviewed_at IS NOT NULL
-                AND reviewed_at >= created_at
-            )
+    author_id bigint REFERENCES users (id) ON DELETE SET NULL,
+    moderator_id bigint REFERENCES users (id) ON DELETE SET NULL,
+    note_id bigint UNIQUE REFERENCES note (id) ON DELETE CASCADE,
+    new_answer text NOT NULL,
+    status varchar(20) NOT NULL DEFAULT 'PENDING',
+    -- PENDING / ACCEPTED / REJECTED
+    created_at timestamptz NOT NULL DEFAULT now(),
+    reviewed_at timestamptz,
+    CONSTRAINT change_request_answer_not_blank CHECK (length(btrim(new_answer)) > 0),
+    CONSTRAINT change_request_status_values CHECK (status IN ('PENDING', 'ACCEPTED', 'REJECTED')),
+    CONSTRAINT change_request_review_consistency CHECK (
+        (
+            status = 'PENDING'
+            AND moderator_id IS NULL
+            AND reviewed_at IS NULL
         )
+        OR (
+            status <> 'PENDING'
+            AND reviewed_at IS NOT NULL
+            AND reviewed_at >= created_at
+        )
+    )
 );
 
 CREATE TABLE card_progress (
