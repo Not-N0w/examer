@@ -109,29 +109,6 @@ end; -- rebuild after?
 $$ language plpgsql;
 
 
-create or replace function submit_answer(p_user_id bigint, p_card_id bigint, p_grade numeric) returns void as $$
-declare
-    v_coef numeric;
-begin
-    insert into card_answer (user_id, card_id, grade) values (p_user_id, p_card_id, p_grade);
- 
-    select coef into v_coef from card_progress where user_id = p_user_id and card_id = p_card_id;
- 
-    v_coef := round(0.6 * v_coef + 0.4 * p_grade, 3);
- 
-    update card_progress
-    set coef = v_coef,
-        next_review = user_today(p_user_id) + case
-            when v_coef < 0.3 then 1
-            when v_coef < 0.6 then 3
-            when v_coef < 0.85 then 7
-            else 14
-        end
-    where user_id = p_user_id and card_id = p_card_id;
-end;
-$$ language plpgsql;
-
-
 create or replace function push_note_as_change_request(p_note_id bigint) returns bigint as $$
 declare
     v_card_id bigint;
