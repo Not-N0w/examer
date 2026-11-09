@@ -6,7 +6,7 @@ CREATE TABLE users (
     timezone varchar(64) NOT NULL DEFAULT 'Europe/Moscow',
     avatar_object_key varchar(255),
     created_at timestamptz NOT NULL DEFAULT now(),
-    CONSTRAINT users_login_not_blank CHECK (length(btrim(login)) > 0),
+    CONSTRAINT users_login_not_blank CHECK (length(btrim(login)) > 0)
 );
 
 CREATE TABLE exam (
