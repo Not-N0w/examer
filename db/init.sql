@@ -16,7 +16,7 @@ CREATE TABLE exam (
     exam_date date NOT NULL,
     stage varchar(20) NOT NULL DEFAULT 'FILLING',
     -- FILLING / STUDYING / FINISHED
-    invite_code varchar(32) NOT NULL UNIQUE,
+    invite_code varchar(32) NOT NULL UNIQUE DEFAULT substring(md5(random()::text), 1, 32),
     owner_id bigint NOT NULL REFERENCES users (id) ON DELETE RESTRICT,
     created_at timestamptz NOT NULL DEFAULT now(),
     CONSTRAINT exam_title_not_blank CHECK (length(btrim(title)) > 0),
@@ -73,7 +73,7 @@ CREATE TABLE change_request (
     card_id bigint NOT NULL REFERENCES card (id) ON DELETE CASCADE,
     author_id bigint REFERENCES users (id) ON DELETE SET NULL,
     moderator_id bigint REFERENCES users (id) ON DELETE SET NULL,
-    note_id bigint UNIQUE REFERENCES note (id) ON DELETE CASCADE,
+    note_id bigint UNIQUE REFERENCES note (id) ON DELETE SET NULL,
     new_answer text NOT NULL,
     status varchar(20) NOT NULL DEFAULT 'PENDING',
     -- PENDING / ACCEPTED / REJECTED
