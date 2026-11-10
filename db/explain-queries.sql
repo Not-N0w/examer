@@ -1,0 +1,34 @@
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT *
+FROM card
+WHERE exam_id = 46;
+
+
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT *
+FROM card_progress
+WHERE card_id = 51;
+
+
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT *
+FROM notification
+WHERE user_id = 485
+ORDER BY created_at DESC
+LIMIT 20;
+
+
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT *
+FROM note
+WHERE card_id = 1987
+  AND user_id = 571
+ORDER BY created_at DESC;
+
+
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT *
+FROM card_answer
+WHERE user_id = 411
+  AND card_id = 51
+ORDER BY answered_at DESC;

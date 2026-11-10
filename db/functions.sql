@@ -109,10 +109,9 @@ $$ language plpgsql;
 create or replace function join_exam(p_user_id bigint, p_invite_code varchar) returns bigint as $$
 declare
     v_exam_id bigint;
-    v_stage varchar;
     v_priority int;
 begin
-    select id, stage into v_exam_id, v_stage from exam where invite_code = p_invite_code;
+    select id, stage into v_exam_id from exam where invite_code = p_invite_code;
 
     if not found then
         raise exception 'Invalid invite code';

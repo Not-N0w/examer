@@ -144,7 +144,7 @@ CREATE TABLE plan_item (
     CONSTRAINT plan_item_review_nonneg CHECK (review_cards >= 0),
     CONSTRAINT plan_item_minutes_range CHECK (
         minutes BETWEEN 0
-        AND 1440
+        AND 600
     )
 );
 
